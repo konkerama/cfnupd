@@ -10,7 +10,8 @@ tmp dir https://doc.rust-lang.org/std/env/fn.temp_dir.html
 
 todo:
 
-- testing
+- test on a more complicated cfn use-case
+- unit testing
 
 gh actions:
 - run tests
