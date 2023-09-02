@@ -1,0 +1,14 @@
+[
+  {
+    "parameter_key": "Value",
+    "parameter_value": "bar",
+    "use_previous_value": false,
+    "resolved_value": "N/A"
+  },
+  {
+    "parameter_key": "Name",
+    "parameter_value": "foo1",
+    "use_previous_value": false,
+    "resolved_value": "N/A"
+  }
+]
