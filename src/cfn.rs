@@ -5,8 +5,10 @@ use aws_sdk_cloudformation::types::Parameter;
 use aws_sdk_cloudformation::types::StackStatus;
 use aws_sdk_cloudformation::types::TemplateStage;
 use aws_sdk_cloudformation::{config::Region, Client};
+use console::style;
 use std::fs;
 use std::io::Write;
+use std::{thread, time};
 
 pub async fn init_client(region: Option<String>) -> Client {
     let region_provider = RegionProviderChain::first_try(region.map(Region::new))
@@ -17,12 +19,17 @@ pub async fn init_client(region: Option<String>) -> Client {
     Client::new(&shared_config)
 }
 
-pub async fn update_stack(client: &Client, name: &str, directory: &String) -> Result<()> {
-    let contents = fs::read_to_string(format!("{}/{}.yaml", directory, name))
-        .expect("Something went wrong reading the file");
+pub async fn update_stack(
+    client: &Client,
+    name: &str,
+    cfn_template_location: &String,
+    cfn_parameters_location: &String,
+) -> Result<()> {
+    let contents =
+        fs::read_to_string(cfn_template_location).expect("Something went wrong reading the file");
     tracing::debug!("update_stack::template: {:?}", contents);
-    let params = fs::read_to_string(format!("{}/parameters.json", directory))
-        .expect("Something went wrong reading the file");
+    let params =
+        fs::read_to_string(cfn_parameters_location).expect("Something went wrong reading the file");
     tracing::debug!("update_stack::parameters: {:?}", params);
 
     let input: Option<Vec<Parameter>> = json_to_param(params)?;
@@ -37,13 +44,14 @@ pub async fn update_stack(client: &Client, name: &str, directory: &String) -> Re
 
     tracing::debug!("update_stack::update_stack_response: {:?}", resp);
 
-    println!("✅ Successfully Initiated Stack Update.");
-
     Ok(())
 }
 
-pub async fn get_template(client: &Client, name: &str, directory: &String) -> Result<()> {
-    // Return an error if stack_name does not exist
+pub async fn get_template(
+    client: &Client,
+    name: &str,
+    cfn_template_location: &String,
+) -> Result<()> {
     let resp = client
         .get_template()
         .stack_name(name)
@@ -58,15 +66,16 @@ pub async fn get_template(client: &Client, name: &str, directory: &String) -> Re
         .context("unable to retrieve template body")?;
     tracing::debug!("get_template::get_template_response_body: {:?}", status);
 
-    let file_path = format!("{}/{}.yaml", directory, name);
-
-    fs::write(file_path, status).expect("Unable to write file");
+    fs::write(cfn_template_location, status).expect("Unable to write file");
 
     Ok(())
 }
 
-pub async fn get_params(client: &Client, name: &str, directory: &String) -> Result<()> {
-    // Return an error if stack_name does not exist
+pub async fn get_params(
+    client: &Client,
+    name: &str,
+    cfn_parameters_location: &String,
+) -> Result<()> {
     let resp = client.describe_stacks().stack_name(name).send().await?;
 
     tracing::debug!("get_params::describe_stacks_response: {:?}", resp);
@@ -116,9 +125,7 @@ pub async fn get_params(client: &Client, name: &str, directory: &String) -> Resu
 
     let params_ser = serde_json::to_string_pretty(&parameter_list)?;
 
-    let file_path = format!("{}/parameters.json", directory);
-
-    let mut file = std::fs::File::create(file_path)?;
+    let mut file = std::fs::File::create(cfn_parameters_location)?;
     file.write_all(params_ser.as_bytes())?;
 
     Ok(())
@@ -138,7 +145,49 @@ pub async fn describe_stack(client: &Client, name: &str) -> Result<StackStatus> 
         .context("Error extracting stack information")?
         .clone();
 
-    println!("Stack status: {}", status.as_ref());
+    print_status(status.as_ref());
 
     Ok(status)
+}
+
+fn print_status(status: &str) {
+    if status.contains("ROLLBACK") {
+        println!(
+            "{} Stack status: {}",
+            style("***").bold().dim(),
+            style(status).red()
+        );
+    } else if status.contains("FAIL") {
+        println!(
+            "{} Stack status: {}",
+            style("***").bold().dim(),
+            style(status).red()
+        );
+    } else if status.contains("IN_PROGRESS") {
+        println!(
+            "{} Stack status: {}",
+            style("***").bold().dim(),
+            style(status).blue()
+        );
+    } else {
+        println!(
+            "{} Stack status: {}",
+            style("***").bold().dim(),
+            style(status).green()
+        );
+    }
+}
+
+pub async fn get_stack_feedback(client: &Client, stack_name: &str) -> Result<()> {
+    loop {
+        let binding = describe_stack(&client, &stack_name)
+            .await
+            .context("Unable to describe stack")?;
+        let stack_status = binding.as_ref();
+        if !stack_status.contains("IN_PROGRESS") {
+            break;
+        }
+        thread::sleep(time::Duration::from_secs(3));
+    }
+    Ok(())
 }

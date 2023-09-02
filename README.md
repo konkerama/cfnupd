@@ -10,8 +10,14 @@ tmp dir https://doc.rust-lang.org/std/env/fn.temp_dir.html
 
 todo:
 
-- use https://docs.rs/indicatif/latest/indicatif/ for status
 - testing
-- release and ship as binary
-- color terminal support
-- windows/mac support?
+
+gh actions:
+- run tests
+- deploy binary for:
+  - linux 
+  - mac
+  - windows
+
+expected behavior: 
+throws error if no modifications are made
