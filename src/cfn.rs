@@ -36,11 +36,11 @@ pub async fn update_stack(
 
     let input: Option<Vec<Parameter>> = json_to_param(params)?;
 
-            let mut resp = client
-            .update_stack()
-            .stack_name(name)
-            .template_body(contents)
-            .set_parameters(input);
+    let mut resp = client
+        .update_stack()
+        .stack_name(name)
+        .template_body(contents)
+        .set_parameters(input);
     if capabilities {
         resp = resp
             .capabilities(Capability::CapabilityAutoExpand)
