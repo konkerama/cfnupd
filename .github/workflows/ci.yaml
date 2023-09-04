@@ -94,7 +94,7 @@ jobs:
       with:
         name: ${{needs.identify_new_version.outputs.NEW_RELEASE}}
         tag_name: ${{needs.identify_new_version.outputs.NEW_RELEASE}}
-        files: target/release/cfnupd
+        files: cfnupd
         generate_release_notes: true
 
     # - name: echo new tag
