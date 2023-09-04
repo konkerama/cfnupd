@@ -81,7 +81,6 @@ jobs:
 
     - name: Release
       uses: softprops/action-gh-release@v1
-      if: startsWith(github.ref, 'refs/tags/')
       with:
         name: ${{needs.identify_new_version.outputs.NEW_RELEASE}}
         files: target/release/cfnupd
