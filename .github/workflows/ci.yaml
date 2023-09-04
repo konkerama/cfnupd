@@ -91,9 +91,9 @@ jobs:
       run: cargo build --release --target=aarch64-apple-darwin
     - name: rename binary
       run: |
-      ls -la
-      ls -la target/
-      cp target/release/cfnupd ./cfnup-${{needs.identify_new_version.outputs.NEW_RELEASE}}-aarch64-apple-darwin
+        ls -la
+        ls -la target/
+        cp target/release/cfnupd ./cfnup-${{needs.identify_new_version.outputs.NEW_RELEASE}}-aarch64-apple-darwin
     - name: Upload Mac ux artifact
       uses: actions/upload-artifact@v3
       with:
