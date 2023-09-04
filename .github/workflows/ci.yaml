@@ -102,7 +102,7 @@ jobs:
 
   build_windows:
     name: 'Build Windows'
-    runs-on: macos-11
+    runs-on: windows-latest
     needs: identify_new_version
     steps:
     - uses: actions/checkout@v3
