@@ -112,8 +112,6 @@ jobs:
       run: cargo build --release
     - name: Rename portable exe
       run: |
-        ls -la 
-        ls -la target/
         cp ./target/release/cfnupd.exe ./cfnup-${{needs.identify_new_version.outputs.NEW_RELEASE}}-x86_64-pc-windows
     - name: Upload Windows artifact
       uses: actions/upload-artifact@v3
