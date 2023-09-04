@@ -1,6 +1,7 @@
 use crate::helper::{json_to_param, ParamJson};
 use anyhow::{Context, Result};
 use aws_config::meta::region::RegionProviderChain;
+use aws_sdk_cloudformation::types::Capability;
 use aws_sdk_cloudformation::types::Parameter;
 use aws_sdk_cloudformation::types::StackStatus;
 use aws_sdk_cloudformation::types::TemplateStage;
@@ -22,6 +23,7 @@ pub async fn init_client(region: Option<String>) -> Client {
 pub async fn update_stack(
     client: &Client,
     name: &str,
+    capabilities: bool,
     cfn_template_location: &String,
     cfn_parameters_location: &String,
 ) -> Result<()> {
@@ -34,15 +36,20 @@ pub async fn update_stack(
 
     let input: Option<Vec<Parameter>> = json_to_param(params)?;
 
-    let resp = client
-        .update_stack()
-        .stack_name(name)
-        .template_body(contents)
-        .set_parameters(input)
-        .send()
-        .await?;
+            let mut resp = client
+            .update_stack()
+            .stack_name(name)
+            .template_body(contents)
+            .set_parameters(input);
+    if capabilities {
+        resp = resp
+            .capabilities(Capability::CapabilityAutoExpand)
+            .capabilities(Capability::CapabilityIam)
+            .capabilities(Capability::CapabilityNamedIam)
+    }
+    let response = resp.send().await?;
 
-    tracing::debug!("update_stack::update_stack_response: {:?}", resp);
+    tracing::debug!("update_stack::update_stack_response: {:?}", response);
 
     Ok(())
 }

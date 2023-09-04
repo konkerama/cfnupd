@@ -25,6 +25,10 @@ struct Opt {
     // Whether to save modified artifacts to current directory
     #[structopt(short, long)]
     artifacts_to_current_dir: Option<bool>,
+
+    // Allow all cfn capabilities
+    #[structopt(short, long)]
+    capabilities: bool,
 }
 
 static CHECK: Emoji<'_, '_> = Emoji("✅  ", "");
@@ -45,6 +49,7 @@ async fn main() -> Result<()> {
         stack_name,
         verbose,
         artifacts_to_current_dir,
+        capabilities,
     } = Opt::parse();
 
     if verbose {
@@ -108,6 +113,7 @@ async fn main() -> Result<()> {
     let _ = update_stack(
         &client,
         &stack_name,
+        capabilities,
         &cfn_locations.tmp_cfn_template_location,
         &cfn_locations.tmp_cfn_parameters_location,
     )
