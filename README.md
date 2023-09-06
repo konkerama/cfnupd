@@ -1,6 +1,6 @@
 # Cloudformation Updater (cfnupd)
 
-A CLI tool written in rust to allow a quick and easy way to update your existing Cloudformation Stacks. It allows you to target the stack which you want to modify, perform the modifications of the template/parameters locally and then launch the update and provide feedback its success/failure. Finally it also provides the ability to save the modified artifacts for future use. 
+A CLI tool written in rust to allow a quick and easy way to update your existing Cloudformation Stacks. It allows you to target the stack which you want to modify, perform the modifications of the template/parameters locally and then launch the update and provide feedback its success/failure. Finally it also provides the ability to save the modified artifacts for future use.
 
 **Notes:**
 
@@ -38,13 +38,13 @@ The tool requires the modification of local files (template & parameter file) th
 
 You can use the cli tool by running `cfnupd` on your command line and providing the following input parameters:
 
-| Argument                            | Description                                                  | Default Value               | Example Value |
-| ----------------------------------- | ------------------------------------------------------------ | --------------------------- | ------------- |
-| `--stack-name` (`-s`)               | The name of the stack you want to update                     | N/A                         | `foo`         |
-| `--region` (`-r`)                   | The region in which the AWS Cloudformation stack you want to update exists | <retrieved from aws config> | `eu-west-1`   |
-| `--artifacts-to-current-dir` (`-a`) | Whether or not to save the updated artifacts to the current directory. If not specified the used gets a prompt after the modification and the update occurs. (`true`/`false`) | N/A                         | `true`        |
-| `--capabilities` (`-c`)             | Provide the necessary Cloudformation capabilities required for the update to be performed (`CapabilityIam`/`CapabilityNamedIam`/`CapabilityAutoExpand`). If not provided and the update requires any of this capabilities then the update will fail. | N/A                         | N/A           |
-| `--verbose` (`-v`)                  | Whether or not to print verbose logs on the stdout. To be used only for debug purposes | N/A                         | N/A           |
+| Argument                            | Description                                                  | Default Value                   | Example Value |
+| ----------------------------------- | ------------------------------------------------------------ | ------------------------------- | ------------- |
+| `--stack-name` (`-s`)               | The name of the stack you want to update                     | N/A                             | `foo`         |
+| `--region` (`-r`)                   | The region in which the AWS Cloudformation stack you want to update exists | Value retrieved from AWS config | `eu-west-1`   |
+| `--artifacts-to-current-dir` (`-a`) | Whether or not to save the updated artifacts to the current directory. If not specified the used gets a prompt after the modification and the update occurs. (`true`/`false`) | N/A                             | `true`        |
+| `--capabilities` (`-c`)             | Provide the necessary Cloudformation capabilities required for the update to be performed (`CapabilityIam`/`CapabilityNamedIam`/`CapabilityAutoExpand`). If not provided and the update requires any of this capabilities then the update will fail. | N/A                             | N/A           |
+| `--verbose` (`-v`)                  | Whether or not to print verbose logs on the stdout. To be used only for debug purposes | N/A                             | N/A           |
 
 example command:
 
