@@ -59,6 +59,8 @@ impl CfnLocations {
     }
 }
 
+// Identifying location of tmp directory based on the OS and creates a subdirectory
+// to store the to be updated artifacts
 pub fn identify_tmp_directory(stack_name: &String) -> Result<String> {
     let binding = env::temp_dir();
     let dir = binding.to_str().context("Issue finding tmp directory")?;
@@ -82,6 +84,7 @@ pub fn identify_tmp_directory(stack_name: &String) -> Result<String> {
     Ok(directory)
 }
 
+// Converts the json input to the CFN params struct
 pub fn json_to_param(s: String) -> Result<Option<Vec<Parameter>>> {
     let json_input: Vec<ParamJson> = serde_json::from_str(&s)?;
     tracing::debug!("json_to_param::json_input: {:?}", json_input);
@@ -111,6 +114,8 @@ fn get_config_file_location() -> Result<(PathBuf, PathBuf)> {
     Ok((config_directory_name, config_file_path))
 }
 
+// Get Editor for the current system.
+// More info on the decision logic can be found on the documentation
 pub fn get_editor() -> Result<String> {
     let (config_directory_name, config_path) = get_config_file_location()?;
 
@@ -143,6 +148,7 @@ pub fn get_editor() -> Result<String> {
     }
 }
 
+// Copying artifacts from the tmp directory to the "current" directory for future use
 pub fn cp_artifacts(cfn_locations: &CfnLocations) -> Result<()> {
     fs::create_dir_all(&cfn_locations.target_directory)?;
     println! {"Copying cfn artifacts to {}/", cfn_locations.target_directory}
@@ -157,6 +163,8 @@ pub fn cp_artifacts(cfn_locations: &CfnLocations) -> Result<()> {
     Ok(())
 }
 
+// Identifies whether of not there is a need for saving artifacts on the tmp directory to the
+// "current" directory based on the user's input
 pub fn save_artifacts_if_needed(
     artifacts_to_current_dir: Option<bool>,
     cfn_locations: CfnLocations,
@@ -194,6 +202,7 @@ pub fn save_artifacts_if_needed(
     Ok(())
 }
 
+// Modify downloaded artifacts using the configured file editor
 pub fn modify_artifacts(
     cfn_template_location: &String,
     cfn_parameters_location: &String,
