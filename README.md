@@ -5,7 +5,7 @@ A CLI tool written in rust to allow a quick and easy way to update your existing
 **Notes:**
 
 - This is **NOT** a full replacement of the AWS CLI nor the AWS SDKs, this is a wrapper on top of it to speed up minor changes on the existing deployed stacks. 
-- This is NOT the recommended approach on working with production AWS Cloudformation Stacks. This tool is primarily targeted on minor updated of dev/concept Cloudformation stacks that are not yet integrated on a full git repository with a CICD in place.
+- This is **NOT** the recommended approach on working with production AWS Cloudformation Stacks. This tool is primarily targeted on minor updated of dev/concept Cloudformation stacks that are not yet integrated on a full git repository with a CICD in place.
 
 ![cli-output](.docs/images/cli-output.png?raw=true "sample cli output")
 
