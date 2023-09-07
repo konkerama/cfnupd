@@ -121,20 +121,23 @@ pub fn get_editor() -> Result<String> {
 
     // Check if the "EDITOR" environment variable is set
     if let Ok(editor) = var("EDITOR") {
-        tracing::debug!("get_editor::env_var: {}", editor);
-        return Ok(editor);
+        if !editor.is_empty() {
+            tracing::debug!("get_editor::env_var: {}", editor);
+            return Ok(editor);
+        }
     }
 
     if config_path.exists() {
+        tracing::debug!("get_editor::found config file");
         let s = Config::builder()
             .add_source(File::with_name(
                 config_path.to_str().context("Issue finding config file")?,
             ))
             .add_source(Environment::with_prefix("app"))
             .build()?;
-        tracing::debug!("get_editor::found config file");
         return Ok(s.get::<String>("EDITOR")?);
     } else {
+        tracing::debug!("get_editor::config file does not exist. Creating directory");
         // Create the config directory and file with default value ("nano")
         fs::create_dir_all(&config_directory_name)?;
         let mut file = fs::File::create(&config_path)?;
