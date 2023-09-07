@@ -1,0 +1,129 @@
+name: 'CI'
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+
+permissions:
+  contents: write
+
+jobs:
+  identify_new_version:
+    name: Identify New Release
+    runs-on: ubuntu-latest
+    outputs: 
+      NEW_RELEASE: ${{ steps.taggerDryRun.outputs.new_tag }}
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: '0'
+    - name: Minor version for each merge
+      id: taggerDryRun
+      uses: anothrNick/github-tag-action@1.67.0
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        DRY_RUN: true
+        DEFAULT_BUMP: patch
+
+    - name: echo new tag
+      run: |
+        echo "The next tag version will be: ${{ steps.taggerDryRun.outputs.new_tag }}"
+    - name: echo tag
+      run: |
+        echo "The current tag is: ${{ steps.taggerDryRun.outputs.tag }}"
+    - name: echo part
+      run: |
+        echo "The version increment was: ${{ steps.taggerDryRun.outputs.part }}"
+
+  build_linux:
+    name: 'Build Linux'
+    runs-on: ubuntu-latest
+    needs: identify_new_version
+    steps:
+    - uses: actions/checkout@v3
+
+    - uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+
+    - name: ⚡ Cache
+      uses: actions/cache@v2
+      with:
+        path: |
+          /home/runner/.cargo/registry
+          /home/runner/.cargo/git
+          rust/target
+        key: ${{ runner.os }}-cargo-${{ hashFiles('Cargo.lock') }}
+
+    # - uses: actions-rs/cargo@v1
+    #   with:
+    #     command: install
+    #     args: sqlx-cli
+
+    - name: Check Format
+      run: cargo fmt --check
+
+    # - name: Install dependencies
+    #   run: ./test.sh
+
+    - name: Build
+      run: cargo build --release
+    - name: rename binary
+      run: cp target/release/cfnupd ./cfnup-${{needs.identify_new_version.outputs.NEW_RELEASE}}-x86_64-unknown-linux-gnu
+    - name: Upload linux artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: cfnupd_linux
+        path: cfnup-${{needs.identify_new_version.outputs.NEW_RELEASE}}-x86_64-unknown-linux-gnu
+
+  build_mac:
+    name: 'Build Mac'
+    runs-on: macos-11
+    needs: identify_new_version
+    steps:
+    - uses: actions/checkout@v3
+    - name: Install dependencies
+      run: brew install scdoc
+    - name: Install ARM target
+      run: rustup update && rustup target add aarch64-apple-darwin
+    - name: Build ARM
+      run: cargo build --release --target=aarch64-apple-darwin
+    - name: rename binary
+      run: |
+        ls -la target/aarch64-apple-darwin/release/
+        cp target/aarch64-apple-darwin/release/cfnupd ./cfnup-${{needs.identify_new_version.outputs.NEW_RELEASE}}-aarch64-apple-darwin
+    - name: Upload Mac ux artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: cfnupd_mac
+        path: cfnup-${{needs.identify_new_version.outputs.NEW_RELEASE}}-aarch64-apple-darwin
+
+  bump_up_version:
+    name: Bump up Release
+    runs-on: ubuntu-latest
+    needs: [build_linux, build_mac, identify_new_version]
+    if: ${{ github.ref == 'refs/heads/main' && github.event_name == 'push' }}
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: '0'
+    - name: Download math result for job 1
+      uses: actions/download-artifact@v3
+      with:
+        name: cfnupd_linux
+    - name: Download math result for job 1
+      uses: actions/download-artifact@v3
+      with:
+        name: cfnupd_mac
+    - name: rename binary
+      run: ls -la
+    - name: Release
+      uses: softprops/action-gh-release@v1
+      with:
+        name: ${{needs.identify_new_version.outputs.NEW_RELEASE}}
+        tag_name: ${{needs.identify_new_version.outputs.NEW_RELEASE}}
+        files: | 
+          cfnup-${{needs.identify_new_version.outputs.NEW_RELEASE}}-aarch64-apple-darwin
+          cfnup-${{needs.identify_new_version.outputs.NEW_RELEASE}}-x86_64-unknown-linux-gnu
+        generate_release_notes: true
