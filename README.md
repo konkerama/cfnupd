@@ -20,12 +20,18 @@ Windows is not supported as there is not an out of the box cli text editor to us
 
 ## How to install
 
+### Prebuild binaries
+
 Download the appropriate version for your OS for the Github Releases Page and run the following command
 ``` bash
 sudo mv cfnup-<version>-<os-architecture> /usr/local/bin
 ```
 
+### Build from source
 
+1. Download and install rust on your system 
+2. Clone the repository 
+3. Run `make`
 
 ## Prerequisites
 
