@@ -70,12 +70,12 @@ jobs:
     - name: Build
       run: cargo build --release
     - name: rename binary
-      run: cp target/release/cfnupd ./cfnup-${{needs.identify_new_version.outputs.NEW_RELEASE}}-x86_64-unknown-linux-gnu
+      run: cp target/release/cfnupd ./cfnupd-${{needs.identify_new_version.outputs.NEW_RELEASE}}-x86_64-unknown-linux-gnu
     - name: Upload linux artifact
       uses: actions/upload-artifact@v3
       with:
         name: cfnupd_linux
-        path: cfnup-${{needs.identify_new_version.outputs.NEW_RELEASE}}-x86_64-unknown-linux-gnu
+        path: cfnupd-${{needs.identify_new_version.outputs.NEW_RELEASE}}-x86_64-unknown-linux-gnu
 
   build_mac:
     name: 'Build Mac'
@@ -92,12 +92,12 @@ jobs:
     - name: rename binary
       run: |
         ls -la target/aarch64-apple-darwin/release/
-        cp target/aarch64-apple-darwin/release/cfnupd ./cfnup-${{needs.identify_new_version.outputs.NEW_RELEASE}}-aarch64-apple-darwin
+        cp target/aarch64-apple-darwin/release/cfnupd ./cfnupd-${{needs.identify_new_version.outputs.NEW_RELEASE}}-aarch64-apple-darwin
     - name: Upload Mac ux artifact
       uses: actions/upload-artifact@v3
       with:
         name: cfnupd_mac
-        path: cfnup-${{needs.identify_new_version.outputs.NEW_RELEASE}}-aarch64-apple-darwin
+        path: cfnupd-${{needs.identify_new_version.outputs.NEW_RELEASE}}-aarch64-apple-darwin
 
   bump_up_version:
     name: Bump up Release
@@ -124,6 +124,6 @@ jobs:
         name: ${{needs.identify_new_version.outputs.NEW_RELEASE}}
         tag_name: ${{needs.identify_new_version.outputs.NEW_RELEASE}}
         files: | 
-          cfnup-${{needs.identify_new_version.outputs.NEW_RELEASE}}-aarch64-apple-darwin
-          cfnup-${{needs.identify_new_version.outputs.NEW_RELEASE}}-x86_64-unknown-linux-gnu
+          cfnupd-${{needs.identify_new_version.outputs.NEW_RELEASE}}-aarch64-apple-darwin
+          cfnupd-${{needs.identify_new_version.outputs.NEW_RELEASE}}-x86_64-unknown-linux-gnu
         generate_release_notes: true
