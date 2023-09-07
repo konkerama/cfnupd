@@ -24,7 +24,8 @@ Windows is not supported as there is not an out of the box cli text editor to us
 
 Download the appropriate version for your OS for the Github Releases Page and run the following command
 ``` bash
-sudo mv cfnup-<version>-<os-architecture> /usr/local/bin
+sudo mv cfnup-<version>-<os-architecture> /usr/local/bin/cfnupd
+sudo chmod 775 /usr/local/bin/cfnupd
 ```
 
 ### Build from source
