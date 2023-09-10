@@ -10,15 +10,15 @@ use tracing::level_filters::LevelFilter;
 use tracing_subscriber::{layer::SubscriberExt, Registry};
 #[derive(Debug, Parser)]
 struct Opt {
-    /// The AWS Region.
+    // The AWS Region.
     #[structopt(short, long)]
     region: Option<String>,
 
-    /// The name of the AWS CloudFormation stack.
+    // The name of the AWS CloudFormation stack.
     #[structopt(short, long)]
     stack_name: String,
 
-    /// Whether to display additional information.
+    // Whether to display additional information.
     #[structopt(short, long)]
     verbose: bool,
 
@@ -29,6 +29,10 @@ struct Opt {
     // Allow all cfn capabilities
     #[structopt(short, long)]
     capabilities: bool,
+
+    // The Editor to use for modifying the artifacts
+    #[structopt(short, long)]
+    editor: Option<String>,
 }
 
 static CHECK: Emoji<'_, '_> = Emoji("✅  ", "");
@@ -50,6 +54,7 @@ async fn main() -> Result<()> {
         verbose,
         artifacts_to_current_dir,
         capabilities,
+        editor,
     } = Opt::parse();
 
     if verbose {
@@ -100,6 +105,7 @@ async fn main() -> Result<()> {
     );
 
     let _ = modify_artifacts(
+        editor,
         &cfn_locations.tmp_cfn_template_location,
         &cfn_locations.tmp_cfn_parameters_location,
     )

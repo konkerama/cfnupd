@@ -24,8 +24,8 @@ Windows is not supported as there is not an out of the box cli text editor to us
 
 Download the appropriate version for your OS for the Github Releases Page and run the following command
 ``` bash
-sudo mv cfnup-<version>-<os-architecture> /usr/local/bin/cfnupd
-sudo chmod 775 /usr/local/bin/cfnupd
+chmod 775 cfnupd-<version>-<os-architecture> 
+sudo mv cfnupd-<version>-<os-architecture> /usr/local/bin/cfnupd
 ```
 
 In case you face issues with the prebuilt binaries it is recommended to build from source.
@@ -63,6 +63,7 @@ You can use the cli tool by running `cfnupd` on your command line and providing 
 | `--artifacts-to-current-dir` (`-a`) | Whether or not to save the updated artifacts to the current directory. If not specified the used gets a prompt after the modification and the update occurs. (`true`/`false`) | N/A                             | `true`        |
 | `--capabilities` (`-c`)             | Provide the necessary Cloudformation capabilities required for the update to be performed (`CapabilityIam`/`CapabilityNamedIam`/`CapabilityAutoExpand`). If not provided and the update requires any of this capabilities then the update will fail. | N/A                             | N/A           |
 | `--verbose` (`-v`)                  | Whether or not to print verbose logs on the stdout. To be used only for debug purposes | N/A                             | N/A           |
+| `--editor` (`-e`)                   | Provide the editor you want to use for modifying the CFN artifacts. If provided it will also modify the `config.toml` file with the selected editor for future calls. | N/A                             | `vim`         |
 
 example command:
 
