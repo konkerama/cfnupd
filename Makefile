@@ -1,9 +1,9 @@
-all: build install
 
 build:
 	cargo build --release
 
-install:
+copy:
 	sudo cp target/release/cfnupd /usr/local/bin
 	sudo chmod 775 /usr/local/bin/cfnupd
 
+install: build copy
