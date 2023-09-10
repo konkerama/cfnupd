@@ -18,6 +18,7 @@ static DIRECTORY: Emoji<'_, '_> = Emoji("📁  ", "");
 
 static CONFIG_DIRECTORY_NAME: &str = "cfnupd";
 static CONFIG_FILENAME: &str = "config.toml";
+static DEFAULT_EDITOR: &str = "nano";
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct ParamJson {
@@ -114,10 +115,31 @@ fn get_config_file_location() -> Result<(PathBuf, PathBuf)> {
     Ok((config_directory_name, config_file_path))
 }
 
+fn override_config_file(config_directory_name: PathBuf, config_file_path: PathBuf, editor: String) -> Result<()> {
+    fs::create_dir_all(&config_directory_name)?;
+    let mut file = fs::File::create(&config_file_path)?;
+    file.write_all(format!("EDITOR = \"{}\"", editor).as_bytes())?;
+    Ok(())
+}
+
+
+
 // Get Editor for the current system.
 // More info on the decision logic can be found on the documentation
-pub fn get_editor() -> Result<String> {
+pub fn get_editor(editor_argument: Option<String>) -> Result<String> {
     let (config_directory_name, config_path) = get_config_file_location()?;
+
+    // if editor argument is set return editor & override the config file
+    match editor_argument {
+        Some(editor) => {
+            tracing::debug!("get_editor::editor {} provided in cli arguments", editor);
+            override_config_file(config_directory_name, config_path, editor.clone());
+            return Ok(editor)
+        }
+        None => {
+            tracing::debug!("get_editor::no editor provided in cli arguments");
+        }
+    }
 
     // Check if the "EDITOR" environment variable is set
     if let Ok(editor) = var("EDITOR") {
@@ -139,15 +161,12 @@ pub fn get_editor() -> Result<String> {
     } else {
         tracing::debug!("get_editor::config file does not exist. Creating directory");
         // Create the config directory and file with default value ("nano")
-        fs::create_dir_all(&config_directory_name)?;
-        let mut file = fs::File::create(&config_path)?;
-        file.write_all(b"EDITOR = \"nano\"")?;
-        let default_value = "nano".to_string();
+        let _ = override_config_file(config_directory_name, config_path, DEFAULT_EDITOR.to_string());
         tracing::debug!(
             "get_editor::creating config file with default value as {}",
-            default_value
+            DEFAULT_EDITOR
         );
-        return Ok(default_value);
+        return Ok(DEFAULT_EDITOR.to_string());
     }
 }
 
@@ -207,10 +226,11 @@ pub fn save_artifacts_if_needed(
 
 // Modify downloaded artifacts using the configured file editor
 pub fn modify_artifacts(
+    editor: Option<String>,
     cfn_template_location: &String,
     cfn_parameters_location: &String,
 ) -> Result<()> {
-    let editor = get_editor().context("Unable to retrieve editor")?;
+    let editor = get_editor(editor).context("Unable to retrieve editor")?;
 
     Command::new(&editor)
         .arg(cfn_template_location)
