@@ -30,7 +30,7 @@ struct Opt {
     #[structopt(short, long)]
     capabilities: bool,
 
-    // The Editor to use for modifying the artifacts 
+    // The Editor to use for modifying the artifacts
     #[structopt(short, long)]
     editor: Option<String>,
 }

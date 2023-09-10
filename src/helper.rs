@@ -115,14 +115,16 @@ fn get_config_file_location() -> Result<(PathBuf, PathBuf)> {
     Ok((config_directory_name, config_file_path))
 }
 
-fn override_config_file(config_directory_name: PathBuf, config_file_path: PathBuf, editor: String) -> Result<()> {
+fn override_config_file(
+    config_directory_name: PathBuf,
+    config_file_path: PathBuf,
+    editor: String,
+) -> Result<()> {
     fs::create_dir_all(&config_directory_name)?;
     let mut file = fs::File::create(&config_file_path)?;
     file.write_all(format!("EDITOR = \"{}\"", editor).as_bytes())?;
     Ok(())
 }
-
-
 
 // Get Editor for the current system.
 // More info on the decision logic can be found on the documentation
@@ -134,7 +136,7 @@ pub fn get_editor(editor_argument: Option<String>) -> Result<String> {
         Some(editor) => {
             tracing::debug!("get_editor::editor {} provided in cli arguments", editor);
             override_config_file(config_directory_name, config_path, editor.clone());
-            return Ok(editor)
+            return Ok(editor);
         }
         None => {
             tracing::debug!("get_editor::no editor provided in cli arguments");
@@ -161,7 +163,11 @@ pub fn get_editor(editor_argument: Option<String>) -> Result<String> {
     } else {
         tracing::debug!("get_editor::config file does not exist. Creating directory");
         // Create the config directory and file with default value ("nano")
-        let _ = override_config_file(config_directory_name, config_path, DEFAULT_EDITOR.to_string());
+        let _ = override_config_file(
+            config_directory_name,
+            config_path,
+            DEFAULT_EDITOR.to_string(),
+        );
         tracing::debug!(
             "get_editor::creating config file with default value as {}",
             DEFAULT_EDITOR
