@@ -135,7 +135,7 @@ pub fn get_editor(editor_argument: Option<String>) -> Result<String> {
     match editor_argument {
         Some(editor) => {
             tracing::debug!("get_editor::editor {} provided in cli arguments", editor);
-            override_config_file(config_directory_name, config_path, editor.clone());
+            let _ = override_config_file(config_directory_name, config_path, editor.clone());
             return Ok(editor);
         }
         None => {
