@@ -32,7 +32,7 @@ In case you face issues with the prebuilt binaries it is recommended to build fr
 
 ### Build from source
 
-1. Download and install ![rust](https://www.rust-lang.org/tools/install) on your system.
+1. Download and install [rust](https://www.rust-lang.org/tools/install) on your system.
 2. Clone the repository 
 3. Run `make install`
 
