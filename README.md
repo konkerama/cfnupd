@@ -52,20 +52,6 @@ The tool requires the modification of local files (template & parameter file) th
 
 
 
-<<<<<<< Updated upstream
-## How to use
-
-You can use the cli tool by running `cfnupd` on your command line and providing the following input parameters:
-
-| Argument                            | Description                                                  | Example Value |
-| ----------------------------------- | ------------------------------------------------------------ | ------------- |
-| `--stack-name` (`-s`)               | The name of the stack you want to update.                    | `foo`         |
-| `--region` (`-r`)                   | The region in which the AWS Cloudformation stack you want to update exists. If not provided value is retrieved from the AWS Config. | `eu-west-1`   |
-| `--artifacts-to-current-dir` (`-a`) | Whether or not to save the updated artifacts to the current directory. If not specified the used gets a prompt after the modification and the update occurs. (Options: `true`/`false`) | `true`        |
-| `--capabilities` (`-c`)             | Provide the necessary Cloudformation capabilities required for the update to be performed (`CapabilityIam`/`CapabilityNamedIam`/`CapabilityAutoExpand`). If not provided and the update requires any of this capabilities then the update will fail. | N/A           |
-| `--verbose` (`-v`)                  | Whether or not to print verbose logs on the stdout. To be used only for debug purposes. | N/A           |
-| `--editor` (`-e`)                   | Provide the editor you want to use for modifying the CFN artifacts. If provided it will also modify the `config.toml` file with the selected editor for future calls. | `vim`         |
-=======
 ## Usage
 
 ``` 
@@ -88,7 +74,6 @@ Options:
   -h, --help
           Print help
 ```
->>>>>>> Stashed changes
 
 example command:
 
