@@ -7,7 +7,7 @@ A CLI tool written in rust to allow a quick and easy way to update your existing
 - This is **NOT** a full replacement of the AWS CLI nor the AWS SDKs, this is a wrapper on top of it to speed up minor changes on the existing deployed stacks. 
 - This is **NOT** the recommended approach on working with production AWS Cloudformation Stacks. This tool is primarily targeted on minor updated of dev/concept Cloudformation stacks that are not yet integrated on a full git repository with a CICD in place.
 
-![cli-output](.docs/images/cli-output.png?raw=true "sample cli output")
+![demo](.docs/images/demo.gif?raw=true "sample cli output")
 
 ## Supported Platforms
 
@@ -52,6 +52,7 @@ The tool requires the modification of local files (template & parameter file) th
 
 
 
+<<<<<<< Updated upstream
 ## How to use
 
 You can use the cli tool by running `cfnupd` on your command line and providing the following input parameters:
@@ -64,6 +65,30 @@ You can use the cli tool by running `cfnupd` on your command line and providing 
 | `--capabilities` (`-c`)             | Provide the necessary Cloudformation capabilities required for the update to be performed (`CapabilityIam`/`CapabilityNamedIam`/`CapabilityAutoExpand`). If not provided and the update requires any of this capabilities then the update will fail. | N/A           |
 | `--verbose` (`-v`)                  | Whether or not to print verbose logs on the stdout. To be used only for debug purposes. | N/A           |
 | `--editor` (`-e`)                   | Provide the editor you want to use for modifying the CFN artifacts. If provided it will also modify the `config.toml` file with the selected editor for future calls. | `vim`         |
+=======
+## Usage
+
+``` 
+$ cfnupd -h
+Usage: cfnupd [OPTIONS] --stack-name <STACK_NAME>
+
+Options:
+  -s, --stack-name <STACK_NAME>
+          The name of the stack you want to update
+  -r, --region <REGION>
+          The region in which the AWS Cloudformation stack you want to update exists. If not provided value is retrieved from the AWS Config. (eg eu-west-1)
+  -e, --editor <EDITOR>
+          Whether or not to print verbose logs on the stdout. To be used only for debug purposes
+  -c, --capabilities
+          Provide the necessary Cloudformation capabilities required for the update to be performed (CapabilityIam/CapabilityNamedIam/CapabilityAutoExpand). If not provided and the update requires any of this capabilities then the update will fail
+  -a, --artifacts-to-current-dir <ARTIFACTS_TO_CURRENT_DIR>
+          Whether or not to save the updated artifacts to the current directory. If not specified the used gets a prompt after the modification and the update occurs [possible values: true, false]
+  -v, --verbose
+          Whether to display additional information
+  -h, --help
+          Print help
+```
+>>>>>>> Stashed changes
 
 example command:
 
