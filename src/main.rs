@@ -14,22 +14,22 @@ struct Opt {
     #[structopt(short, long)]
     stack_name: String,
 
-    /// The region in which the AWS Cloudformation stack you want to update exists. 
+    /// The region in which the AWS Cloudformation stack you want to update exists.
     /// If not provided value is retrieved from the AWS Config. (eg eu-west-1)
     #[structopt(short, long)]
     region: Option<String>,
 
-    /// Whether or not to print verbose logs on the stdout. 
+    /// Whether or not to print verbose logs on the stdout.
     /// To be used only for debug purposes.
     #[structopt(short, long)]
     editor: Option<String>,
 
-    /// Provide the necessary Cloudformation capabilities required for the update to be performed (CapabilityIam/CapabilityNamedIam/CapabilityAutoExpand). 
+    /// Provide the necessary Cloudformation capabilities required for the update to be performed (CapabilityIam/CapabilityNamedIam/CapabilityAutoExpand).
     /// If not provided and the update requires any of this capabilities then the update will fail.
     #[structopt(short, long)]
     capabilities: bool,
 
-    /// Whether or not to save the updated artifacts to the current directory. 
+    /// Whether or not to save the updated artifacts to the current directory.
     /// If not specified the used gets a prompt after the modification and the update occurs.
     #[structopt(short, long)]
     artifacts_to_current_dir: Option<bool>,
